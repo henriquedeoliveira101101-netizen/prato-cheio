@@ -10,6 +10,7 @@ Conecta doadores de alimentos excedentes a ONGs, antes que a comida se perca.
 - Henrique Cordeiro de Oliveira – @henriquedeoliveira101101-netizen
 - Kauã Henrique Lucindo – @lucind0
 - Nicholas Scoz dos Santos – @nicholasscoz
+- Guilherme Pietro Ruiz Costa - @GuiPRC
 
 ## Como rodar
 
