@@ -1,58 +1,58 @@
-# Documento de Análise — Prato Cheio
-
-*Trabalho 1 · máximo 4 páginas · entrega na Aula 5*
-
-## Problema central
-Diariamente, estabelecimentos comerciais lidam com o excedente de alimentos em perfeitas condições, que acabam no lixo devido à falta de logística rápida. Simultaneamente, ONGs precisam de doações constantes. O problema central é a ausência de uma conexão ágil entre quem tem alimento sobrando e quem precisa dele, antes que passe do prazo de consumo.
-
-## Incertezas
-- Os doadores (restaurantes/mercados) terão tempo para usar o sistema durante o expediente?
-- As ONGs terão logística (transporte e pessoal) para retirar as doações a tempo?
-- Como garantir a segurança alimentar dos itens doados?
+# Análise de Requisitos e Domínio — Prato Cheio
 
 ## Stakeholders
-| Stakeholder | Interesse | Influência | O que espera |
-|---|---|---|---|
-| **Doadores (Restaurantes, Mercados)** | Evitar desperdício e contribuir socialmente | Alta | Um processo rápido, sem burocracia e que não atrapalhe a rotina de trabalho. |
-| **ONGs / Projetos Sociais** | Captar alimentos para pessoas em vulnerabilidade | Alta | Previsibilidade, clareza sobre o que está disponível e facilidade de reserva. |
-| **Equipe de Desenvolvimento** | Construir um software funcional e validado | Média | Cumprir os requisitos da disciplina (CI verde, testes) e entregar valor contínuo. |
+
+| Stakeholder | O que quer | Interesse | Influência | Consequência para a iteração 1 |
+|---|---|---|---|---|
+| **Marta (Patrocinadora / Operação)** | Validar o piloto do projeto e conectar doadores a ONGs de forma rápida | Alto | Alta | Envolver diretamente na validação e aceitar requisitos de operação imediata |
+| **ONGs e Cozinhas Comunitárias** | Previsibilidade sobre os alimentos disponíveis e rapidez no aceite/coleta | Alto | Alta | Entrevistar primeiro e aceitar requisitos de aceite simples agora |
+| **Vigilância Sanitária (Regulador)** | Garantia de segurança alimentar e rastreabilidade mínima (tipo, quantidade, validade) | Baixo | Alta | Manter satisfeita atendendo a exigência legal de validade e tipo de alimento sem bloquear a operação |
+| **Doadores (Restaurantes e Padarias)** | Cadastrar doações com extrema rapidez, sem burocracia no meio da rotina | Alto | Alta | Focar no formulário com tempo de preenchimento reduzido e poucos campos |
+| **Voluntários Entregadores** | Rotas claras e bom funcionamento em celulares com conexão instável | Alto | Baixa | Manter informados; requisitos avançados de logística ficam para iterações futuras |
+| **Família Atendida (Beneficiário Final)** | Receber refeições seguras, com dignidade e qualidade | Alto | Baixa | Monitorar o impacto e satisfação indiretamente através do feedback das ONGs |
+
+---
 
 ## Objetivos de impacto
-1. Reduzir o volume de alimentos em boas condições que são descartados diariamente.
-2. Aumentar a capacidade de atendimento das ONGs locais.
-3. Minimizar o tempo de conexão entre a disponibilidade de uma doação e a sua coleta.
+
+1. **Reduzir a mediana do tempo de coleta:** Reduzir o tempo decorrido entre o momento da publicação da doação pelo doador e a coleta efetiva pela ONG (linha de base: desconhecida, medir a partir do piloto).
+2. **Aumentar o volume de refeições salvas:** Aumentar a quantidade total (em kg/refeições) de alimentos doados e coletados com sucesso antes do vencimento (linha de base: desconhecida, medir no piloto).
+3. **Reduzir a taxa de descarte:** Reduzir o percentual de doações cadastradas que chegam ao horário limite sem que nenhuma ONG aceite ou colete (linha de base: desconhecida, medir a partir da iteração 1).
+
+---
 
 ## Regras de negócio
-- Uma doação só pode ser aceita por uma única ONG (exclusividade).
-- A publicação de uma doação recusa submissões sem os campos obrigatórios (descrição e quantidade).
-- Após ser aceita, a doação deve ser imediatamente removida da lista de itens disponíveis.
 
-## Histórias de usuário
-| # | História (Como… quero… para…) | INVEST: o que falha |
-|---|---|---|
-| **1** | **Como** doador, **quero** publicar uma doação com descrição e quantidade **para** que ONGs possam recolher meu excedente. | *Nenhuma falha.* É pequena, independente e testável no walking skeleton. |
-| **2** | **Como** ONG, **quero** visualizar as doações disponíveis e aceitar uma delas **para** garantir alimento para minha instituição. | *Nenhuma falha.* Entrega valor imediato ao conectar as duas pontas. |
+### 1. Registro Mínimo de Rastreabilidade (Imposta / Exigência do Regulador)
+* **Onde estava:** Exigência da Vigilância Sanitária.
+* **Enunciado explícito:** Toda doação cadastrada deve conter obrigatoriamente o tipo do alimento, a quantidade estimada e a data/hora limite de validade.
+* **Como verificar:** O sistema deve impedir a submissão de formulários que omitam esses três dados essenciais.
 
-## Critérios de aceite
-**História 2** — **Dado** que existe uma doação de "50 marmitas" na lista de disponíveis, **Quando** a ONG clica para aceitar a doação, **Então** o sistema marca a doação como aceita pela ONG e remove o item da lista de doações disponíveis.
+### 2. Exclusividade por Aceite (Praticada / Comportamento Atual)
+* **Onde estava:** Comportamento praticado no grupo de WhatsApp ("quem responde primeiro leva").
+* **Enunciado explícito:** Uma doação aceita por uma ONG muda imediatamente seu estado para "reservada", ficando indisponível para aceite por qualquer outra ONG.
+* **Como verificar:** Ao realizar duas requisições simultâneas de aceite para a mesma doação, apenas a primeira deve obter sucesso e a segunda deve receber erro de indisponibilidade.
 
-## Riscos
-| Risco | Probabilidade | Impacto | Mitigação |
-|---|---|---|---|
-| Baixa adoção pelos doadores por acharem o sistema complexo | Média | Alto | Focar o *walking skeleton* em uma interface de publicação extremamente minimalista. |
-| Duas ONGs tentarem aceitar a mesma doação ao mesmo tempo | Alta | Alto | Implementar bloqueio no banco de dados para garantir que apenas o primeiro clique registre o aceite (regra testada). |
-| Alimento estragar antes da coleta | Alta | Alto | (Futuro) Estabelecer janelas de horário rígidas para retirada no momento da doação. |
+### 3. Expiração Automática por Inação (REGRA AUSENTE)
+* **Onde estava:** Silêncio do caso ("o que acontece se a ONG aceita e não busca?").
+* **Enunciado explícito:** Se uma ONG aceitar uma doação e não realizar a confirmação de coleta em até 2 horas (ou até o limite estipulado no cadastro), o aceite expira automaticamente e a doação volta ao status "disponível" no sistema.
+* **Responsável pela decisão:** Decidido pelo time de desenvolvimento junto à operação (Marta).
+* **Como verificar:** Simular uma doação aceita sem confirmação de coleta, avançar o tempo do sistema além do limite e verificar se a doação volta a ser exibida na lista de disponíveis.
 
-## Hipótese e experimento
-**Hipótese:** Acreditamos que a barreira para a doação é o tempo gasto na comunicação. Se reduzirmos o tempo de publicação para menos de 2 minutos, os estabelecimentos doarão mais.
-**Experimento:** O *Walking Skeleton* (U1) vai provar a viabilidade técnica da publicação e reserva em fluxo direto, validando se as regras de concorrência se mantêm intactas com o banco de dados.
+---
 
-## Decisão de análise
-- **Problema:** Como lidar com a concorrência se várias ONGs quiserem a mesma doação?
-- **Alternativas:** (A) Criar uma fila de espera; (B) Adotar o modelo "primeiro a aceitar, leva".
-- **Decisão e justificativa:** Optamos pela alternativa (B). É mais condizente com a necessidade de escoamento rápido de alimentos perecíveis e simplifica a implementação do *walking skeleton*.
-- **Riscos e limitações:** ONGs menores ou com menos acesso à internet podem ser prejudicadas por não conseguirem aceitar doações a tempo.
+## Conflitos de prioridade
 
-## Uso de IA
-**O que geramos com IA:** Estruturação inicial dos tópicos de Stakeholders, Riscos e Histórias de Usuário utilizando o Gemini.
-**O que verificamos e o que alteramos:** Verificamos se o escopo se mantinha alinhado às restrições do *Walking Skeleton* da Unidade 1, alteramos os critérios de aceite para refletirem especificamente os testes exigidos no projeto (aceitar doação e removê-la da lista) e adaptamos as regras de negócio à realidade do desenvolvimento local.
+### 1. Falas em conflito
+* **Doador:** "Preciso cadastrar a doação em menos de 10 segundos no meio da correria do restaurante, senão jogo a comida no lixo por falta de tempo."
+* **Vigilância Sanitária:** "Exijo o registro detalhado e rastreável da validade e do tipo de alimento para liberar a operação sem riscos à saúde pública."
+
+### 2. Anatomia do conflito
+* **Eixo do trade-off:** Quantidade de campos obrigatórios e tempo necessário para preencher o formulário de cadastro.
+* **O que cada lado perde:** 
+  * Se priorizar apenas o Doador: Perde-se a rastreabilidade exigida pelo regulador, arriscando o veto do piloto pela Vigilância Sanitária.
+  * Se priorizar apenas a Vigilância Sanitária: Perde-se doadores devido à burocracia do preenchimento demorado.
+
+### 3. Critério de decisão e saída adotada
+* **Critério:** Na Iteração 1, o formulário exigirá apenas os 3 campos obrigatórios previstos em lei (Tipo, Quantidade e Validade), utilizando botões de seleção rápida (presets) para dispensar a digitação de texto longo.
+* **Saída adotada:** Anular o trade-off (Redesenho de interface com seletores ágeis de validade e quantidade, garantindo conformidade sanitária em um tempo de preenchimento inferior a 15 segundos).
