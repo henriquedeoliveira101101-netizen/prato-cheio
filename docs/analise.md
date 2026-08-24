@@ -56,3 +56,42 @@
 ### 3. Critério de decisão e saída adotada
 * **Critério:** Na Iteração 1, o formulário exigirá apenas os 3 campos obrigatórios previstos em lei (Tipo, Quantidade e Validade), utilizando botões de seleção rápida (presets) para dispensar a digitação de texto longo.
 * **Saída adotada:** Anular o trade-off (Redesenho de interface com seletores ágeis de validade e quantidade, garantindo conformidade sanitária em um tempo de preenchimento inferior a 15 segundos).
+
+## Histórias de Usuário e Avaliação INVEST
+
+### 1. Cinco Histórias Iniciais (com falhas no INVEST)
+Abaixo estão 5 rascunhos de histórias de usuário e a avaliação do motivo pelo qual elas falham em pelo menos um critério do acrônimo INVEST:
+
+1. **História:** Como ONG, quero aceitar uma doação e já traçar a rota do voluntário no mapa ao mesmo tempo, para garantir a retirada.
+   * **Falha no critério:** **I**ndependent (Independente) e **S**mall (Pequena). Ela acopla a regra de negócio de aceite com a complexidade de roteamento de mapas.
+2. **História:** Como Doador, quero um formulário de 3 passos com um botão verde neon para cadastrar a comida.
+   * **Falha no critério:** **N**egotiable (Negociável). A história dita a interface (UI) em vez de focar no problema a ser resolvido (cadastrar doação).
+3. **História:** Como Administrador do banco de dados, quero que a tabela de doações tenha uma chave estrangeira para a tabela de ONGs, para manter a integridade referencial.
+   * **Falha no critério:** **V**aluable (Valor). É uma tarefa técnica. Não entrega valor direto de negócio para o usuário final.
+4. **História:** Como Doador, quero que o sistema seja rápido ao cadastrar uma doação para eu não perder meu tempo.
+   * **Falha no critério:** **E**stimable (Estimável) e **T**estable (Testável). O termo "rápido" é vago, subjetivo e impossível de ser testado objetivamente (rápido é 1 segundo ou 1 minuto?).
+5. **História:** Como ONG, quero gerenciar todo o ciclo do alimento, desde o aceite até a entrega na casa das famílias e a geração de relatórios mensais, para ter controle total.
+   * **Falha no critério:** **S**mall (Pequena). É um Épico gigante que levaria meses para ser construído, impossível de caber em uma única iteração.
+
+### 2. Quebra de História Gigante (Fatiamento de Épico)
+**História Gigante (Épico):** Como ONG, quero gerenciar todo o processo de aquisição de doações (ver o que tem, reservar a comida e confirmar que peguei) para garantir que a comida chegue na cozinha.
+
+**Fatiada em 3 menores e com valor independente:**
+* **Fatia 1:** Como ONG, quero visualizar a lista de doações disponíveis no dia, para saber se há alimentos que atendem à minha demanda.
+* **Fatia 2:** Como ONG, quero aceitar uma doação específica da lista, para garantir que o alimento fique reservado para mim e não vá para outra instituição.
+* **Fatia 3:** Como ONG, quero marcar uma doação reservada como "coletada", para sinalizar ao doador e ao sistema que o processo foi concluído com sucesso.
+
+### 3. Correção de Histórias geradas por IA
+Registros das correções feitas após geração inicial via IA:
+
+* **IA Gerou:** "O sistema deve enviar um email quando a doação for aceita."
+  * **O que mudamos e por quê:** Mudamos para *"Como Doador, quero ser notificado quando uma ONG aceitar minha doação, para saber que a comida não será descartada."* A IA havia gerado um requisito de sistema sem ator e sem valor; ajustamos para o formato de História de Usuário (Ator, Ação e Valor).
+* **IA Gerou:** "Como usuário, quero fazer login para usar o app."
+  * **O que mudamos e por quê:** Mudamos para *"Como Voluntário, quero acessar o sistema com meu email e senha, para visualizar as coletas designadas a mim."* "Usuário" era muito genérico e "usar o app" não refletia um valor de negócio real.
+* **IA Gerou:** "Como Doador, quero cadastrar doação."
+  * **O que mudamos e por quê:** Mudamos para *"Como Doador, quero cadastrar uma doação informando tipo, quantidade e validade, para disponibilizá-la às ONGs cadastradas."* A IA não especificou o "para quê" (o valor da entrega) nem as restrições básicas para a história ser testável.
+
+### 4. História Zero (Walking Skeleton)
+A fatia fina escolhida para o walking skeleton da próxima aula é:
+**"Como Doador, quero cadastrar uma doação simples com sua validade, para que ela fique registrada no sistema e disponível."**
+*Justificativa:* É a funcionalidade central que dispara todo o fluxo de valor. Sem o cadastro da doação, as ONGs não têm o que listar ou aceitar.
