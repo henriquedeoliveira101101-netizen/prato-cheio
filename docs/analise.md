@@ -95,3 +95,43 @@ Registros das correções feitas após geração inicial via IA:
 A fatia fina escolhida para o walking skeleton da próxima aula é:
 **"Como Doador, quero cadastrar uma doação simples com sua validade, para que ela fique registrada no sistema e disponível."**
 *Justificativa:* É a funcionalidade central que dispara todo o fluxo de valor. Sem o cadastro da doação, as ONGs não têm o que listar ou aceitar.
+
+## Critérios de Aceite (BDD)
+
+Para validar as histórias de usuário, definimos os seguintes cenários usando a estrutura Dado/Quando/Então:
+
+**História 1:** Como Doador, quero cadastrar uma doação simples com sua validade (História Zero / Walking Skeleton).
+* **Cenário:** Cadastro de doação com sucesso
+* **Dado** que o doador preencheu os campos obrigatórios "tipo", "quantidade" e "validade" (futura)
+* **Quando** ele submete o formulário de cadastro
+* **Então** o sistema salva a doação no banco de dados com o status "disponível" e retorna uma confirmação visual de sucesso (HTTP 201).
+
+**História 2:** Como ONG, quero visualizar a lista de doações disponíveis no dia.
+* **Cenário:** Listagem de doações ativas
+* **Dado** que existem doações com status "disponível" não expiradas no banco de dados
+* **Quando** a ONG acessa a rota de listagem de doações
+* **Então** o sistema retorna apenas as doações ativas, ocultando as que já foram aceitas ou vencidas.
+
+**História 3:** Como ONG, quero aceitar uma doação específica da lista.
+* **Cenário:** Concorrência no aceite de doação
+* **Dado** que a doação X está "disponível"
+* **Quando** a ONG solicita o aceite dessa doação
+* **Então** o sistema altera o status da doação X para "reservada" e vincula à ONG, impedindo que outras instituições aceitem a mesma doação.
+
+---
+
+## Hipóteses e Experimentos
+
+* **Suposição do caso:** Assumimos que as ONGs estão com tempo e infraestrutura para ficar atualizando o sistema o tempo todo em busca de comida.
+* **Hipótese testável:** Acreditamos que **notificar as ONGs ativamente** (push/mensagem) reduzirá drasticamente o gargalo de coleta. Saberemos que estamos certos se, no piloto, **80% das doações cadastradas forem aceitas em menos de 15 minutos**.
+* **Experimento:** Durante as duas primeiras semanas do piloto, enviaremos um alerta manual (WhatsApp) para as ONGs sempre que uma doação for publicada, e mediremos no banco de dados a diferença de tempo (timestamp) entre a criação e o aceite.
+
+---
+
+## Riscos e Mitigações
+
+1. **Risco Técnico/Legal (Vigilância Sanitária):** Doadores cadastrarem alimentos com a validade já expirada por erro de digitação, gerando risco à saúde das famílias e embargo do projeto.
+   * **Mitigação Concreta:** Implementar validação estrita no backend impedindo qualquer `INSERT` no banco de dados de doações cuja data/hora de validade seja menor ou igual ao horário atual do servidor.
+
+2. **Risco Operacional (Falso Aceite):** Uma ONG aceitar a doação para garantir a reserva, mas não ter voluntários para buscar, deixando a comida estragar na origem.
+   * **Mitigação Concreta:** Criar a rotina de "Expiração Automática". Se a doação for aceita e não for marcada como "coletada" em um prazo de 2 horas, o sistema reverte o status automaticamente para "disponível" e alerta a próxima ONG da fila.
