@@ -20,7 +20,7 @@ describe('publicar e listar doações', () => {
   it('mostra a doação publicada na lista de disponíveis', async () => {
     await request(app)
       .post('/api/doacoes')
-      .send({ tipo: 'Sopa', quantidade: '10 porções', validade: '2026-08-10' });
+      .send({ tipo: 'Sopa', quantidade: '10 porções', validade: '2099-12-31' });
 
     const res = await request(app).get('/api/doacoes');
     
@@ -37,6 +37,15 @@ describe('publicar e listar doações', () => {
     expect(res.status).toBe(400);
     expect(res.body.erro).toBeDefined();
   });
+
+  it('recusa doação com validade no passado', async () => {
+    const res = await request(app)
+      .post('/api/doacoes')
+      .send({ tipo: 'Frutas', quantidade: 10, validade: '2020-01-01' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.erro).toBeDefined();
+  });
 });
 
 describe('aceitar uma doação', () => {
@@ -46,7 +55,7 @@ describe('aceitar uma doação', () => {
   it('marca a doação como aceita pela ONG', async () => {
     const doacaoCriada = await request(app)
       .post('/api/doacoes')
-      .send({ tipo: 'Pão', quantidade: '20 pães', validade: '2026-08-10' });
+      .send({ tipo: 'Pão', quantidade: '20 pães', validade: '2099-12-31' });
     
     const id = doacaoCriada.body.id;
 
@@ -62,7 +71,7 @@ describe('aceitar uma doação', () => {
   it('remove a doação da lista de disponíveis depois de aceita', async () => {
     const doacaoCriada = await request(app)
       .post('/api/doacoes')
-      .send({ tipo: 'Frutas', quantidade: '5 kg', validade: '2026-08-10' });
+      .send({ tipo: 'Frutas', quantidade: '5 kg', validade: '2099-12-31' });
     
     const id = doacaoCriada.body.id;
 
@@ -80,7 +89,7 @@ describe('aceitar uma doação', () => {
     // 1. Cria a doação
     const doacaoCriada = await request(app)
       .post('/api/doacoes')
-      .send({ tipo: 'Leite', quantidade: '12 litros', validade: '2026-08-10' });
+      .send({ tipo: 'Leite', quantidade: '12 litros', validade: '2099-12-31' });
     
     const id = doacaoCriada.body.id;
 
