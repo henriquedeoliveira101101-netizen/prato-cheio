@@ -1,23 +1,27 @@
-# Validação — Prato Cheio
+# Validação dos Critérios de Aceite
 
-*Trabalho 3 · confronto do produto com os critérios de aceite escritos na Unidade 1*
+## História 1 — Cadastro de doação (Walking Skeleton)
 
-Copie aqui os critérios de aceite do seu `docs/analise.md` e marque um por um. **Um "não atende" bem justificado vale mais que um "sim" sem evidência.**
+- **Critério:** dado tipo, quantidade e validade futura, ao submeter, o sistema salva com status "disponivel" e retorna sucesso.
+- **Atende?** Sim.
+- **Evidência:** teste automatizado em `tests/doacoes.test.js` ("doação publicada aparece na lista de disponíveis"). Executado com `npm test` em 23/09/2026 — 6/6 testes passando.
 
-| # | Critério de aceite (da Unidade 1) | Atende? | Evidência |
-|:--:|---|:--:|---|
-| 1 |  | sim / parcial / não | teste, demo, execução do CI |
-| 2 |  |  |  |
-| 3 |  |  |  |
+## História 2 — Listagem de doações disponíveis
 
-## Critérios que não atendem — por quê
+- **Critério:** a rota de listagem retorna somente doações com status "disponivel", ocultando as já aceitas.
+- **Atende?** Sim.
+- **Evidência:** teste "doação aceita some da lista de disponíveis".
 
-(Para cada "parcial" ou "não": o que falta, por que ficou de fora e o que seria necessário.)
+## História 3 — Aceite exclusivo (concorrência)
 
-## Mudanças de critério ao longo do semestre
+- **Critério:** uma doação só pode ser aceita por uma ONG; a segunda tentativa deve ser recusada.
+- **Atende?** Sim.
+- **Evidência:** teste "segunda ONG NÃO consegue aceitar doação já aceita por outra" (retorna erro 400).
 
-(Algum critério da Unidade 1 se mostrou errado ou impossível? Qual, e o que aprenderam com isso.)
+## Regra pendente
 
-## Uso de IA
+- **Expiração automática em 2h:** ainda **não** implementada. Fica como próximo passo da próxima iteração.
 
-(O que foi gerado com IA nesta iteração, o que vocês verificaram e o que alteraram.)
+---
+
+Validado por: Kauã Henrique Lucindo — 23/09/2026
