@@ -1,6 +1,11 @@
 import * as repo from './repositorio.js';
 
 export async function criarDoacao({ tipo, quantidade, validade }) {
+  const dataValidade = new Date(validade);
+  if (isNaN(dataValidade.getTime()) || dataValidade <= new Date()) {
+    throw new Error('Validade deve ser uma data futura.');
+  }
+
   return await repo.inserir({ tipo, quantidade, validade });
 }
 
